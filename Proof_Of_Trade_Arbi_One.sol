@@ -71,7 +71,7 @@ contract Proof_Of_Trade_Arbi_One is Ownable, Pausable {
         uint amount_
     ) external whenNotPaused {
         require(amount_ > 0, "Invalid amount");
-        bytes32 message =  getMessage(timestamp_, amount_, msg.sender);
+        bytes32 message =  getMessage(timestamp_, amount_, address(this), msg.sender);
         require(!_swapKey[message], "Key Already Claimed");
         require(isValidData(message, signature_), "Invalid Signature");
         _swapKey[message] = true;
@@ -91,8 +91,9 @@ contract Proof_Of_Trade_Arbi_One is Ownable, Pausable {
     function getMessage(
         string calldata timestamp_,
         uint amount_,
+        address contractAddress_,
         address msgSender_
     ) public pure returns (bytes32) {
-        return keccak256(abi.encode(timestamp_, amount_, msgSender_));
+        return keccak256(abi.encode(timestamp_, amount_, contractAddress_, msgSender_));
     }
 }
