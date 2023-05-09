@@ -58,7 +58,7 @@ contract POT_Token is ERC20, ERC20Burnable, Pausable, Ownable {
         bytes calldata signature_,
         uint256 amount_
     ) public returns (bool) {
-        bytes32 message = getMessage(timestamp_, amount_, msg.sender);
+        bytes32 message = getMessage(timestamp_, amount_, address(this), msg.sender);
         require(!_swapKey[message], "Key Already Claimed");
         require(isValidData(message, signature_), "Invalid Signature");
         require(amount_ > 0, "Invalid fund");
@@ -84,9 +84,10 @@ contract POT_Token is ERC20, ERC20Burnable, Pausable, Ownable {
     function getMessage(
         string calldata timestamp_,
         uint256 amount_,
+        address contractAddress_,
         address msgSender_
     ) public pure returns (bytes32) {
-        return keccak256(abi.encode(timestamp_, amount_, msgSender_));
+        return keccak256(abi.encode(timestamp_, amount_, contractAddress_, msgSender_));
     }
 
     function isValidData(
